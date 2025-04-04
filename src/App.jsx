@@ -1,34 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import db from './utils/db';
+import { Link, useNavigate } from 'react-router-dom';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Create state variable
+  const [contact, setContact] = useState([]);
+  const navigate = useNavigate();
+  const [search, setSearch] = useState('');
+
+  //search
+  const handleSearch = (e) => {
+    setSearch(e.target.value.toLowerCase());
+  };
+
+
+  // Fetch data from Firestore
+  const fetchContact = async () => {
+    const q = query(collection(db, "contact"), orderBy('lastName', 'asc'));
+    const docSnapshot = await getDocs(q);
+    const data = docSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    setContact(data);
+  };
+
+  //add btn
+  const goToAdd = () => {
+    navigate('/add')
+  }
+
+  // Run once on mount
+  useEffect(() => {
+    fetchContact();
+  }, []);
+
+  console.log(contact);
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <>
+      <div className="container">
+      <h1>Contact Book</h1>
+      <div className="big-box">
+      <div className='box'>
+      <input className="search-width" type="text" placeholder="Search" onChange={handleSearch}/>
+      <button onClick={goToAdd}>Add Student</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <ul>
+        {contact.filter((student) =>
+            `${student.firstName} ${student.lastName}`
+              .toLowerCase()
+              .includes(search.toLowerCase())
+          ).map((student) => (
+          <li key={student.id} className='listStyle'>
+            <Link to={`/student/${student.id}`}>
+              {`${student.firstName} ${student.lastName}`}
+            </Link>
+          </li>
+        ))}
+      </ul>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+      </div>
+    </>
+  );
 }
 
-export default App
+export default App;
