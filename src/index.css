@@ -50,6 +50,12 @@ button{
   padding: 1rem;
   background-color: #104136;
   color: antiquewhite;
+  transition: 0.3s;
+}
+
+button:hover{
+  opacity: 0.8;
+  transition: 0.3s;
 }
 
 body{

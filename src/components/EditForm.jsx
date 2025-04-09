@@ -9,14 +9,14 @@ export const EditForm = ({student, onUpdate}) => {
     });
 
     useEffect(() => {
-        if(student && Object.keys(student).length > 0){
+        
             setFormData({
                 firstName: student.firstName,
                 lastName: student.lastName,
                 email: student.email,
             });
-        }
-    }, [student])
+        
+    }, [student]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
