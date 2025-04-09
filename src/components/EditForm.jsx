@@ -9,13 +9,11 @@ export const EditForm = ({student, onUpdate}) => {
     });
 
     useEffect(() => {
-        
             setFormData({
                 firstName: student.firstName,
                 lastName: student.lastName,
                 email: student.email,
-            });
-        
+            });   
     }, [student]);
 
     const handleChange = (e) => {
